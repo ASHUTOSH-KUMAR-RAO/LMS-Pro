@@ -1,13 +1,38 @@
-import React from 'react'
+
+import { Route, Routes } from "react-router-dom";
+import Home from "./pages/students/home";
+import CourseList from "./pages/students/courses-list";
+import CoourseDetails from "./pages/students/course-details";
+import Enrollment from "./pages/students/my-enrollment";
+import Player from "./pages/students/player";
+import Loading from "./components/students/loading";
+import Educator from "./pages/educator/educator";
+import Dashboard from "./pages/educator/dashboard";
+import AddCourse from "./pages/educator/add-course";
+import MyCourses from "./pages/educator/my-courses";
+import StudentEnrolled from "./pages/educator/students-enrolled";
 
 const App = () => {
   return (
-    <div className='bg-red-300 flex items-center justify-center min-h-screen'>
-      <h1 className='bg-purple-400 w-72 h-72 flex items-center justify-center rounded-b-full font-extrabold text-4xl'>
-        hi kaise 
-      </h1>
+    <div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/course-list" element={<CourseList />} />
+        <Route path="/course-list/:input" element={<CourseList />} />
+        <Route path="/course/:id" element={<CoourseDetails />} />
+        <Route path="/my-enrollments" element={<Enrollment />} />
+        <Route path="/player/courseId" element={<Player />} />
+        <Route path="/loading/:path" element={<Loading />} />
+        <Route path="/educator" element={<Educator/>}>
+        {/* "Parent route = layout wrapper, Child routes = content inside layout, URLs automatically merge ho jate hain! */}
+        <Route path="educator" element={<Dashboard/>}/>
+        <Route path="add-course" element={<AddCourse/>}/>
+        <Route path="my-course" element={<MyCourses/>}/>
+        <Route path="student-enrolled" element={<StudentEnrolled/>}/>
+        </Route>
+      </Routes>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
