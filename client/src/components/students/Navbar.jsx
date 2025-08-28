@@ -298,7 +298,7 @@ const Navbar = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden flex flex-col gap-1 p-2"
+          className="md:hidden flex flex-col gap-1 p-2 cursor-pointer"
           onClick={toggleMobileMenu}
         >
           <span className="w-6 h-0.5 bg-gray-600 transition-all duration-300"></span>
