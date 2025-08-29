@@ -16,6 +16,7 @@
     "framer-motion": "^12.23.12",
     "gsap": "^3.13.0",
     "humanize-duration": "^3.33.0",
+    "lucide-react": "^0.542.0",
     "quill": "^2.0.3",
     "rc-progress": "^4.0.0",
     "react": "^19.1.1",

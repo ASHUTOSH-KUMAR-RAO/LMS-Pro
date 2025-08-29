@@ -1,20 +1,22 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { AppContext } from "../../context/app-context";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Navbar = () => {
+  const { navigate, isEducator } = useContext(AppContext);
   const location = useLocation();
   const isCourseListPage = location.pathname.includes("/courses-list");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   const { openSignIn } = useClerk();
   const { user } = useUser();
-  
+
   // Refs for GSAP animations
   const navRef = useRef(null);
   const logoRef = useRef(null);
@@ -29,63 +31,67 @@ const Navbar = () => {
     const button = buttonRef.current;
 
     // Initial navbar entrance animation
-    gsap.fromTo(navbar, 
-      { 
-        y: -100, 
-        opacity: 0 
+    gsap.fromTo(
+      navbar,
+      {
+        y: -100,
+        opacity: 0,
       },
-      { 
-        y: 0, 
-        opacity: 1, 
-        duration: 0.8, 
-        ease: "power2.out" 
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: "power2.out",
       }
     );
 
     // Logo entrance animation
-    gsap.fromTo(logo,
-      { 
-        scale: 0, 
-        rotation: -180 
+    gsap.fromTo(
+      logo,
+      {
+        scale: 0,
+        rotation: -180,
       },
-      { 
-        scale: 1, 
-        rotation: 0, 
-        duration: 0.8, 
+      {
+        scale: 1,
+        rotation: 0,
+        duration: 0.8,
         ease: "back.out(1.7)",
-        delay: 0.3 
+        delay: 0.3,
       }
     );
 
     // Links staggered animation
-    gsap.fromTo(links,
-      { 
-        x: 50, 
-        opacity: 0 
+    gsap.fromTo(
+      links,
+      {
+        x: 50,
+        opacity: 0,
       },
-      { 
-        x: 0, 
-        opacity: 1, 
-        duration: 0.6, 
+      {
+        x: 0,
+        opacity: 1,
+        duration: 0.6,
         stagger: 0.1,
         ease: "power2.out",
-        delay: 0.5 
+        delay: 0.5,
       }
     );
 
     // Button entrance animation
     if (button) {
-      gsap.fromTo(button,
-        { 
-          scale: 0, 
-          opacity: 0 
+      gsap.fromTo(
+        button,
+        {
+          scale: 0,
+          opacity: 0,
         },
-        { 
-          scale: 1, 
-          opacity: 1, 
-          duration: 0.6, 
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
           ease: "back.out(1.7)",
-          delay: 0.7 
+          delay: 0.7,
         }
       );
     }
@@ -101,56 +107,56 @@ const Navbar = () => {
             backgroundColor: "rgba(255, 255, 255, 0.95)",
             backdropFilter: "blur(20px)",
             borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-            duration: 0.3
+            duration: 0.3,
           });
         } else if (self.progress === 0 && isScrolled) {
           setIsScrolled(false);
           gsap.to(navbar, {
-            backgroundColor: isCourseListPage 
-              ? "rgba(249, 250, 251, 0.8)" 
+            backgroundColor: isCourseListPage
+              ? "rgba(249, 250, 251, 0.8)"
               : "rgba(236, 254, 255, 0.6)",
             backdropFilter: "blur(10px)",
             borderBottom: "1px solid rgba(209, 213, 219, 0.3)",
-            duration: 0.3
+            duration: 0.3,
           });
         }
-      }
+      },
     });
 
     // Cleanup
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, [isScrolled, isCourseListPage]);
 
   // Logo hover animation
   const handleLogoHover = () => {
-    gsap.to(logoRef.current.querySelector('img'), {
+    gsap.to(logoRef.current.querySelector("img"), {
       rotation: 360,
       scale: 1.1,
       duration: 0.6,
-      ease: "power2.out"
+      ease: "power2.out",
     });
-    
-    gsap.to(logoRef.current.querySelector('p'), {
+
+    gsap.to(logoRef.current.querySelector("p"), {
       scale: 1.05,
       duration: 0.3,
-      ease: "power2.out"
+      ease: "power2.out",
     });
   };
 
   const handleLogoLeave = () => {
-    gsap.to(logoRef.current.querySelector('img'), {
+    gsap.to(logoRef.current.querySelector("img"), {
       rotation: 0,
       scale: 1,
       duration: 0.6,
-      ease: "power2.out"
+      ease: "power2.out",
     });
-    
-    gsap.to(logoRef.current.querySelector('p'), {
+
+    gsap.to(logoRef.current.querySelector("p"), {
       scale: 1,
       duration: 0.3,
-      ease: "power2.out"
+      ease: "power2.out",
     });
   };
 
@@ -160,7 +166,7 @@ const Navbar = () => {
       y: -3,
       color: "#2563eb",
       duration: 0.3,
-      ease: "power2.out"
+      ease: "power2.out",
     });
   };
 
@@ -169,7 +175,7 @@ const Navbar = () => {
       y: 0,
       color: "#6b7280",
       duration: 0.3,
-      ease: "power2.out"
+      ease: "power2.out",
     });
   };
 
@@ -179,7 +185,7 @@ const Navbar = () => {
       scale: 1.05,
       boxShadow: "0 20px 40px rgba(37, 99, 235, 0.3)",
       duration: 0.3,
-      ease: "power2.out"
+      ease: "power2.out",
     });
   };
 
@@ -188,25 +194,26 @@ const Navbar = () => {
       scale: 1,
       boxShadow: "0 10px 25px rgba(37, 99, 235, 0.2)",
       duration: 0.3,
-      ease: "power2.out"
+      ease: "power2.out",
     });
   };
 
   // Mobile menu toggle
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    
+
     if (!isMobileMenuOpen) {
-      gsap.fromTo(mobileMenuRef.current,
-        { 
-          height: 0, 
-          opacity: 0 
+      gsap.fromTo(
+        mobileMenuRef.current,
+        {
+          height: 0,
+          opacity: 0,
         },
-        { 
-          height: "auto", 
-          opacity: 1, 
-          duration: 0.4, 
-          ease: "power2.out" 
+        {
+          height: "auto",
+          opacity: 1,
+          duration: 0.4,
+          ease: "power2.out",
         }
       );
     } else {
@@ -214,7 +221,7 @@ const Navbar = () => {
         height: 0,
         opacity: 0,
         duration: 0.4,
-        ease: "power2.in"
+        ease: "power2.in",
       });
     }
   };
@@ -228,7 +235,7 @@ const Navbar = () => {
             ? "bg-gray-50/80 border-gray-300/30"
             : "bg-cyan-50/60 border-gray-300/30"
         } border-b backdrop-blur-sm`}
-        style={{ willChange: 'transform' }}
+        style={{ willChange: "transform" }}
       >
         {/* Logo Section */}
         <div
@@ -238,6 +245,7 @@ const Navbar = () => {
           onMouseLeave={handleLogoLeave}
         >
           <img
+            onClick={() => navigate("/")}
             src="/teachUs.png"
             alt="Logo"
             className="w-8 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 rounded-xl shadow-lg object-cover"
@@ -254,12 +262,13 @@ const Navbar = () => {
             {user && (
               <>
                 <div
-                  ref={(el) => linksRef.current[0] = el}
+                  ref={(el) => (linksRef.current[0] = el)}
                   className="relative font-medium cursor-pointer group"
                   onMouseEnter={() => handleLinkHover(0)}
                   onMouseLeave={() => handleLinkLeave(0)}
+                  onClick={()=>navigate("/educator")}
                 >
-                  Become Educator
+                  {isEducator ? "Educator Dashboar" : "Become Educator"}
                   <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></div>
                 </div>
 
@@ -267,7 +276,7 @@ const Navbar = () => {
 
                 <Link
                   to="/my-enrollment"
-                  ref={(el) => linksRef.current[1] = el}
+                  ref={(el) => (linksRef.current[1] = el)}
                   className="relative font-medium group"
                   onMouseEnter={() => handleLinkHover(1)}
                   onMouseLeave={() => handleLinkLeave(1)}
@@ -316,8 +325,8 @@ const Navbar = () => {
         <div className="px-4 py-6 space-y-4">
           {user ? (
             <>
-              <div className="text-gray-600 font-medium py-2 hover:text-blue-600 transition-colors cursor-pointer">
-                Become Educator
+              <div onClick={()=>navigate("/educator")} className="text-gray-600 font-medium py-2 hover:text-blue-600 transition-colors cursor-pointer">
+                 {isEducator ? "Educator Dashboar" : "Become Educator"}
               </div>
               <Link
                 to="/my-enrollment"
