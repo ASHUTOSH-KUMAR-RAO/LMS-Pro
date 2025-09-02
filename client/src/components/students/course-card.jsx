@@ -312,7 +312,7 @@ const CourseCard = ({ course, index }) => {
               {course.educator?.name?.charAt(0) || "T"}
             </div>
             <p className="text-sm sm:text-base text-gray-600 font-medium truncate">
-              {course.educator?.name || "Teacher"}
+              {course.educator?.name || "Termi-Evolution"}
             </p>
           </motion.div>
 
