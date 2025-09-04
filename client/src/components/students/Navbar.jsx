@@ -275,7 +275,7 @@ const Navbar = () => {
                 <span className="text-gray-400">|</span>
 
                 <Link
-                  to="/my-enrollment"
+                  to="/my-enrollments"
                   ref={(el) => (linksRef.current[1] = el)}
                   className="relative font-medium group"
                   onMouseEnter={() => handleLinkHover(1)}
