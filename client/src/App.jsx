@@ -25,7 +25,7 @@ const App = () => {
         <Route path="/course-list/:input" element={<CourseList />} />
         <Route path="/course/:id" element={<CoourseDetails />} />
         <Route path="/my-enrollments" element={<Enrollment />} />
-        <Route path="/player/courseId" element={<Player />} />
+        <Route path="/player/:courseId" element={<Player />} />
         <Route path="/loading/:path" element={<Loading />} />
         <Route path="/educator" element={<Educator/>}>
         {/* "Parent route = layout wrapper, Child routes = content inside layout, URLs automatically merge ho jate hain! */}

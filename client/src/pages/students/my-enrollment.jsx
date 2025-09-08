@@ -174,7 +174,7 @@ const Enrollment = () => {
                     
                     <td className="px-6 py-4 max-sm:text-right">
                       <button
-                        onClick={() => navigate("/player/" + course._id)}
+                        onClick={() => navigate("/player/courseId" + course._id)}
                         className={`
                           relative overflow-hidden px-6 py-3 rounded-2xl text-white font-semibold
                           transform transition-all duration-300 hover:scale-105 hover:shadow-lg
