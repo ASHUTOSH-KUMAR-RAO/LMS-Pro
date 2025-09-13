@@ -44,7 +44,7 @@ export const AppContextProvider = (props) => {
       chapter.chapterContent.map((lecture) => (time += lecture.lectureDuration))
     );
     return humanizeDuration(time * 60 * 1000, { units: ["h", "m"] });
-    // todo=> Jaab bhi hum humanizeDuration ki baat kerte hai then iska mtlb hota hai ki ,by default time rwa ke form mein deta hai that means (400000 millisecond,45000 second,400 minutes),then isi chij ko remove krne ke liye hum humanizeDuration ka use krte hai ye isese kya hota hai raw ke form mein n convert hoker simple 1h34m30s aise ho jata hai jisko hum easly read kr sekte hai aur ye ek package hai jisko hume install krna padta hai {npm i humanize-duration}
+    // todo=> Jaab bhi hum humanizeDuration ki baat kerte hai then iska mtlb hota hai ki ,by default time rwa ke form mein deta hai that means (400000 millisecond,45000 second,400 minutes),then isi chij ko remove krne ke liye hum humanizeDuration ka use krte hai ye isese kya hota hai raw ke form mein n convert ho ker simple 1h34m30s aise ho jata hai jisko hum easly read kr sekte hai aur ye ek package hai jisko hume install krna padta hai {npm i humanize-duration}
   };
 
   // How To Calculating Number of lecture in a Course
