@@ -1,17 +1,29 @@
 import { Outlet } from "react-router-dom";
+import Navbar from "../../components/educator/navbar";
+import Sidebar from "../../components/educator/sidebar";
+import Footer from "../../components/students/footer";
 
 const Educator = () => {
   return (
-    <div>
-      <h1>Educator</h1>
+    <div className="flex flex-col min-h-screen bg-white">
+      {/* Navbar */}
+      <Navbar />
 
-      {/* Outlet ek placeholder hai jo parent component mein child routes ko render karne ke liye use hota hai,Bina Outlet ke nested routing incomplete hai! 👀 */}
+      {/* Main content area - flex-1 ensures it takes remaining space */}
+      <div className="flex flex-1">
+        <Sidebar />
 
-      {/* parent ka mtlb to yehi hua ki haar page per rander hoga aur ye pehle rander hoga, phir iske baad diffrent-diffrent route per diffrent- diffrent child rander honge  aise hi  treat krta hai outlet child ke sath means parent route child route ke sath,kyuki Outlet child routes ko parent ke andar treat krta hai 😒 */}
+        {/* Content area */}
+        <div className="flex-1 flex flex-col">
+          {/* Outlet content - flex-1 to push footer down */}
+          <div className="flex-1">
+            <Outlet />
+          </div>
+        </div>
+      </div>
 
-      {/* Aur pta hai jiss component ke andar hum outlet ko rander krte ye usi component ko parent component samjh leta hai ,jaise ki maine Educator ke andar rander kiya hai to ye isko parent samjh liya ,same as yedi main student-enrolled ke andar outlet ko rander krta to ye isko parent samjh leta 👉*/}
-
-      <div>{<Outlet />}</div>
+      {/* Footer - Will stick to bottom naturally */}
+      <Footer/>
     </div>
   );
 };

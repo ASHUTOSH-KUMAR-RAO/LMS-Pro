@@ -1,4 +1,3 @@
-
 import { Route, Routes, useMatch } from "react-router-dom";
 import Home from "./pages/students/home";
 import CourseList from "./pages/students/courses-list";
@@ -13,13 +12,17 @@ import MyCourses from "./pages/educator/my-courses";
 import StudentEnrolled from "./pages/educator/students-enrolled";
 import Navbar from "./components/students/Navbar";
 
+import "quill/dist/quill.snow.css"
+
 const App = () => {
-  const isEducatorRoute = useMatch("/educator/*")
+  const isEducatorRoute = useMatch("/educator/*");
+
   return (
     <div className="text-base min-h-screen bg-white">
-    {!isEducatorRoute &&  <Navbar/> }
-  
+      {!isEducatorRoute && <Navbar />}
+
       <Routes>
+        {/* Student Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/course-list" element={<CourseList />} />
         <Route path="/course-list/:input" element={<CourseList />} />
@@ -27,12 +30,16 @@ const App = () => {
         <Route path="/my-enrollments" element={<Enrollment />} />
         <Route path="/player/:courseId" element={<Player />} />
         <Route path="/loading/:path" element={<Loading />} />
-        <Route path="/educator" element={<Educator/>}>
-        {/* "Parent route = layout wrapper, Child routes = content inside layout, URLs automatically merge ho jate hain! */}
-        <Route path="educator" element={<Dashboard/>}/>
-        <Route path="add-course" element={<AddCourse/>}/>
-        <Route path="my-course" element={<MyCourses/>}/>
-        <Route path="student-enrolled" element={<StudentEnrolled/>}/>
+
+        {/* Educator Routes - Fixed Structure */}
+        <Route path="/educator" element={<Educator />}>
+          {/* Index route - shows Dashboard when URL is exactly /educator */}
+          <Route index element={<Dashboard />} />
+
+          {/* Child routes - relative paths */}
+          <Route path="add-course" element={<AddCourse />} />
+          <Route path="my-courses" element={<MyCourses />} />
+          <Route path="student-enrolled" element={<StudentEnrolled />} />
         </Route>
       </Routes>
     </div>
