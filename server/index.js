@@ -7,12 +7,15 @@ import connectDb from "./config/mongodb.js";
 import { clerkWebhooks } from "./controllers/webhooks.js";
 import educatorRouter from "./routes/educatorRoutes.js";
 import { clerkMiddleware } from "@clerk/express";
+import connectCloudinary from "./config/cloudinary.js";
 
 const app = express();
 
 // Connecting Our Database :-
 
 await connectDb();
+
+await connectCloudinary()
 
 app.use(cors()); //! Basically sabko pta hai ki hum cors ko isiliye use krte hai kyuki hum apne backend ko kisi bhi type ke website ke domain se connect kr sekte hai ,aur yedi hum ye nhi krte hai to "CORS ERROR ata hai"
 
