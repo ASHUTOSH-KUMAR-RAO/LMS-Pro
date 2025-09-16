@@ -1,5 +1,6 @@
 import { Webhook } from "svix";
 import User from "../models/User.js";
+import Stripe from "stripe";
 
 /*
 🚀 WEBHOOK EXPLANATION 🚀
@@ -88,3 +89,6 @@ export const clerkWebhooks = async (req, res) => {
     });
   }
 };
+
+
+const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
