@@ -4,7 +4,7 @@ import cors from "cors";
 
 import "dotenv/config"; // todo=> Express mein hum log extra package install karte hai env file ke liye,But next js mein aisa kuch nhi hota hai ,aur dekha jaye to isi choti-choti chijo ke wajah se aaj kaal modern dev mein next js use ho raha hai.
 import connectDb from "./config/mongodb.js";
-import { clerkWebhooks } from "./controllers/webhooks.js";
+import { clerkWebhooks, stripeWebhooks } from "./controllers/webhooks.js";
 import educatorRouter from "./routes/educatorRoutes.js";
 import { clerkMiddleware } from "@clerk/express";
 import connectCloudinary from "./config/cloudinary.js";
@@ -32,6 +32,8 @@ app.use("/api/educator",express.json(),educatorRouter)
 
 app.use("/api/course",express.json(),courseRouter)
 app.use("/api/user",express.json(),userRouter)
+
+app.post("/stripe",express.raw({type:"application/json"}),stripeWebhooks)
 
 
 
