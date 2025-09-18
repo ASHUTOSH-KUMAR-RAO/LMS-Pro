@@ -1,44 +1,79 @@
 import express from "express";
-
 import cors from "cors";
-
-import "dotenv/config"; // todo=> Express mein hum log extra package install karte hai env file ke liye,But next js mein aisa kuch nhi hota hai ,aur dekha jaye to isi choti-choti chijo ke wajah se aaj kaal modern dev mein next js use ho raha hai.
+import "dotenv/config"; // 🔧 Express mein extra package install karna padta hai env file ke liye, But Next.js mein built-in support hai! Modern development mein Next.js popular hone ki ek wajah ye bhi hai 🚀
 import connectDb from "./config/mongodb.js";
-import { clerkWebhooks, stripeWebhooks } from "./controllers/webhooks.js";
-import educatorRouter from "./routes/educatorRoutes.js";
-import { clerkMiddleware } from "@clerk/express";
 import connectCloudinary from "./config/cloudinary.js";
+import { clerkMiddleware } from "@clerk/express";
+import { clerkWebhooks, stripeWebhooks } from "./controllers/webhooks.js";
+
+// 🛤️ Import Routes
+import educatorRouter from "./routes/educatorRoutes.js";
 import courseRouter from "./routes/courseRoute.js";
 import userRouter from "./routes/userRoutes.js";
 
+// 🚀 Initialize Express App
 const app = express();
 
-// Connecting Our Database :-
+// 🔗 Database & Cloud Connections
+try {
+  console.log("🔌 Connecting to databases...");
+  await connectDb();
+  console.log("✅ MongoDB connected successfully!");
 
-await connectDb();
+  await connectCloudinary();
+  console.log("☁️ Cloudinary connected successfully!");
+} catch (error) {
+  console.error("❌ Database connection failed:", error.message);
+  process.exit(1);
+}
 
-await connectCloudinary()
+// 🛡️ Middleware Setup
+/**
+ * 🌐 CORS - Cross-Origin Resource Sharing
+ * Allows frontend domains to connect with our backend
+ * Without this, browsers throw "CORS ERROR" 🚫
+ */
+app.use(cors());
 
-app.use(cors()); //! Basically sabko pta hai ki hum cors ko isiliye use krte hai kyuki hum apne backend ko kisi bhi type ke website ke domain se connect kr sekte hai ,aur yedi hum ye nhi krte hai to "CORS ERROR ata hai"
+/**
+ * 🔐 Clerk Authentication Middleware
+ * Handles user authentication across all routes
+ */
+app.use(clerkMiddleware());
 
-app.use(clerkMiddleware())
+// 🛤️ Routes Configuration
+/**
+ * 🏠 Health Check Route
+ * Basic endpoint to verify server is running
+ */
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "🎉 API is working perfectly!",
+  });
+});
 
-//? Our Routes :-
-app.get("/", (req, res) => res.send("Api Is Working"));
-
+/**
+ * 🔔 Webhook Routes (Raw data required)
+ * These routes need raw body data, not JSON parsed
+ */
 app.post("/clerk", express.json(), clerkWebhooks);
+app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
 
-app.use("/api/educator",express.json(),educatorRouter)
+/**
+ * 📚 API Routes with JSON Middleware
+ * All business logic routes with JSON parsing
+ */
+app.use("/api/educator", express.json(), educatorRouter);
+app.use("/api/course", express.json(), courseRouter);
+app.use("/api/user", express.json(), userRouter);
 
-app.use("/api/course",express.json(),courseRouter)
-app.use("/api/user",express.json(),userRouter)
-
-app.post("/stripe",express.raw({type:"application/json"}),stripeWebhooks)
-
-
-
+// 🚀 Server Startup
 const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
-  console.log(`Server Is Ruining on Port is :- ${PORT}`);
+  console.log("🎯 ================================");
+  console.log(`🚀 Server is running on Port: ${PORT}`);
+  console.log(`🌐 Local URL: http://localhost:${PORT}`);
+  console.log("🎯 ================================");
 });

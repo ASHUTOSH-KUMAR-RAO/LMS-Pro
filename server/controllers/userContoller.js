@@ -2,60 +2,87 @@ import User from "../models/User.js";
 import { Purchase } from "../models/Purchase.js";
 import Course from "../models/Course.js";
 import Stripe from "stripe";
+import { CourseProgres } from "../models/CourseProgress.js";
 
+// Get User Data
 export const getUserData = async (req, res) => {
   try {
     const userId = req.auth.userId;
 
     const user = await User.findById(userId);
+
     if (!user) {
-      return res.json({ success: false, message: "User Not Found" });
+      return res.json({
+        success: false,
+        message: "User Not Found",
+      });
     }
 
-    res.json({ success: true, user });
+    res.json({
+      success: true,
+      user,
+    });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
+// Get User Enrolled Courses
 export const userEnrolledCourses = async (req, res) => {
   try {
     const userId = req.auth.userId;
 
     const userData = await User.findById(userId).populate("enrolledCourses");
 
-    res.json({ success: true, enrolledCourses: userData.enrolledCourses });
+    res.json({
+      success: true,
+      enrolledCourses: userData.enrolledCourses,
+    });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
+// Purchase Course with Stripe Payment
 export const purchaseCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
     const { origin } = req.headers;
-
     const userId = req.auth.userId;
 
+    // Fetch user and course data
     const userData = await User.findById(userId);
     const courseData = await Course.findById(courseId);
 
     if (!userData || !courseData) {
-      return res.json({ success: false, message: "Data Not Found" });
+      return res.json({
+        success: false,
+        message: "Data Not Found",
+      });
     }
 
+    // Calculate discounted price
+    const discountedPrice = (
+      courseData.coursePrice -
+      (courseData.discount * courseData.coursePrice) / 100
+    ).toFixed(2);
+
+    // Create purchase record
     const purchaseData = {
       courseId: courseData._id,
       userId,
-      amount: (
-        courseData.coursePrice -
-        (courseData.discount * courseData.coursePrice) / 100
-      ).toFixed(2),
+      amount: discountedPrice,
     };
 
     const newPurchase = await Purchase.create(purchaseData);
 
-    // Initializing The Payment Gateway
+    // Initialize Stripe payment gateway
     const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
     const currency = process.env.CURRENCY.toLowerCase();
 
@@ -64,27 +91,153 @@ export const purchaseCourse = async (req, res) => {
         price_data: {
           currency,
           product_data: {
-            // Fixed: lowercase 'd'
             name: courseData.courseTitle,
           },
-          unit_amount: Math.round(parseFloat(newPurchase.amount) * 100), // Fixed: better amount handling
+          unit_amount: Math.round(parseFloat(newPurchase.amount) * 100),
         },
         quantity: 1,
       },
     ];
 
+    // Create Stripe checkout session
     const session = await stripeInstance.checkout.sessions.create({
       success_url: `${origin}/loading-my-enrollments`,
       cancel_url: `${origin}/`,
-      line_items: line_items, // Fixed: removed function call
+      line_items: line_items,
       mode: "payment",
       metadata: {
         purchaseId: newPurchase._id.toString(),
       },
     });
 
-    res.json({ success: true, session_url: session.url });
+    res.json({
+      success: true,
+      session_url: session.url,
+    });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Update User Course Progress
+export const updateUserCourseProgress = async (req, res) => {
+  try {
+    const userId = req.auth.userId;
+    const { courseId, lectureId } = req.body;
+
+    const progressData = await CourseProgres.findOne({ userId, courseId });
+
+    if (progressData) {
+      // Check if lecture is already completed
+      if (progressData.lectureCompleted.includes(lectureId)) {
+        return res.json({
+          success: true,
+          message: "Lecture Already Completed",
+        });
+      }
+
+      // Add lecture to completed list
+      progressData.lectureCompleted.push(lectureId);
+      await progressData.save();
+    } else {
+      // Create new progress record
+      await CourseProgres.create({
+        userId,
+        courseId,
+        lectureCompleted: [lectureId],
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Progress Updated",
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Get User Course Progress
+export const getUserCourseProgress = async (req, res) => {
+  try {
+    const userId = req.auth.userId;
+    const { courseId } = req.body;
+
+    const progressData = await CourseProgres.findOne({ userId, courseId });
+
+    res.json({
+      success: true,
+      progressData,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Add User Rating for Course
+export const addUserRating = async (req, res) => {
+  try {
+    const userId = req.auth.userId;
+    const { courseId, rating } = req.body;
+
+    // Validate input data
+    if (!courseId || !userId || !rating || rating < 1 || rating > 5) {
+      return res.json({
+        success: false,
+        message: "Invalid Details",
+      });
+    }
+
+    // Fetch course data
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.json({
+        success: false,
+        message: "Course Not Found",
+      });
+    }
+
+    // Verify user has purchased the course
+    const user = await User.findById(userId);
+    if (!user || !user.enrolledCourses.includes(courseId)) {
+      return res.json({
+        success: false,
+        message: "User not Purchased This Course",
+      });
+    }
+
+    // Check if user already rated this course
+    const existingRatingIndex = course.courseRating.findIndex(
+      (r) => r.userId.toString() === userId
+    );
+
+    if (existingRatingIndex > -1) {
+      // Update existing rating
+      course.courseRating[existingRatingIndex].rating = rating;
+    } else {
+      // Add new rating
+      course.courseRating.push({ userId, rating });
+    }
+
+    await course.save();
+
+    return res.json({
+      success: true,
+      message: "Rating Added Successfully",
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+    });
   }
 };
