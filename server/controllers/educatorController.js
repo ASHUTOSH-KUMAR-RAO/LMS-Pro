@@ -127,7 +127,7 @@ export const addCourse = async (req, res) => {
       isPublished: parsedCourseData.isPublished ?? false,
       discount: parsedCourseData.discount ?? 0,
       courseContent: parsedCourseData.courseContent ?? [],
-      courseRating: [],
+      courseRatings: [],
       enrolledStudents: [],
     };
 
