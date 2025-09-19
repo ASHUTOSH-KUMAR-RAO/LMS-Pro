@@ -222,10 +222,10 @@ export const addUserRating = async (req, res) => {
 
     if (existingRatingIndex > -1) {
       // Update existing rating
-      course.courseRating[existingRatingIndex].rating = rating;
+      course.courseRatings[existingRatingIndex].rating = rating;
     } else {
       // Add new rating
-      course.courseRating.push({ userId, rating });
+      course.courseRatings.push({ userId, rating });
     }
 
     await course.save();
